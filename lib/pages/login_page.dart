@@ -1,3 +1,5 @@
+import 'package:firebase/pages/profile_page.dart';
+import 'package:firebase/pages/register_page.dart';
 import 'package:firebase/pages/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +14,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
+  TextEditingController _emailController = new TextEditingController();
+  TextEditingController _passController = new TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,8 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(29),
             ),
             child: TextField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
               cursorColor: kPrimaryColor,
               decoration: InputDecoration(
                 icon: Icon(Icons.people, color: kPrimaryColor),
@@ -58,6 +64,7 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(29),
             ),
             child: TextField(
+              controller: _passController,
               obscureText: true,
               cursorColor: kPrimaryColor,
               decoration: InputDecoration(
@@ -79,10 +86,22 @@ class _LoginPageState extends State<LoginPage> {
             width: size.width * 0.8,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(29),
+              // ignore: deprecated_member_use
               child: FlatButton(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                 color: kPrimaryColor,
-                onPressed: () {},
+                onPressed: () {
+                  signInWithEmail(email: _emailController.text, pass:_passController.text).then((result){
+                    if(result != null) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context){
+                            return ProfilePage();
+                          })
+                      );
+                    }
+                  });
+                },
                 child: Text(
                   "Login",
                   style: TextStyle(color: Colors.white),
@@ -119,6 +138,7 @@ class _LoginPageState extends State<LoginPage> {
             width: size.width * 0.8,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(29),
+              // ignore: deprecated_member_use
               child: FlatButton(
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                 color: kPrimaryColor,
@@ -152,8 +172,8 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 5),
                   GestureDetector(
                     onTap: () {
-                      // Navigator.push(
-                      //     context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                      Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => RegisterPage()));
                     },
                     child: Text(
                       "Register here",
