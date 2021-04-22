@@ -1,7 +1,7 @@
 import 'package:firebase/pages/login_page.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async{
   runApp(MyApp());
 }
 

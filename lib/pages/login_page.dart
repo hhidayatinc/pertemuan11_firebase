@@ -3,7 +3,8 @@ import 'package:firebase/pages/register_page.dart';
 import 'package:firebase/pages/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'first_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +17,28 @@ class _LoginPageState extends State<LoginPage> {
   final kPrimaryLightColor = Color(0xFFF1E6FF);
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
+  bool _isHidePass = true;
+  String _email;
+  String _password;
+
+  void _togglePasswordvisibility() {
+    setState(() {
+      _isHidePass = !_isHidePass;
+    });
+  }
+
+  Future<void> _loginWithEmail() async {
+    await Firebase.initializeApp();
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: _email, password: _password);
+      print("User : $userCredential");
+    } on FirebaseAuthException catch (e) {
+      print("Error : $e");
+    } catch (e) {
+      print("Error : $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +68,9 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(29),
             ),
             child: TextField(
+              onChanged: (value) {
+                _email = value;
+              },
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               cursorColor: kPrimaryColor,
@@ -64,8 +90,11 @@ class _LoginPageState extends State<LoginPage> {
               borderRadius: BorderRadius.circular(29),
             ),
             child: TextField(
+              onChanged: (value) {
+                _password = value;
+              },
               controller: _passController,
-              obscureText: true,
+              obscureText: _isHidePass,
               cursorColor: kPrimaryColor,
               decoration: InputDecoration(
                 hintText: "Password",
@@ -73,10 +102,16 @@ class _LoginPageState extends State<LoginPage> {
                   Icons.lock,
                   color: kPrimaryColor,
                 ),
-                suffixIcon: Icon(
-                  Icons.visibility,
-                  color: kPrimaryColor,
+                suffixIcon: GestureDetector(
+                  onTap: () {
+                    _togglePasswordvisibility();
+                  },
+                  child: Icon(
+                    _isHidePass ? Icons.visibility_off : Icons.visibility,
+                    color: _isHidePass ? kPrimaryColor : kPrimaryColor,
+                  ),
                 ),
+                isDense: true,
                 border: InputBorder.none,
               ),
             ),
@@ -91,16 +126,12 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                 color: kPrimaryColor,
                 onPressed: () {
-                  signInWithEmail(email: _emailController.text, pass:_passController.text).then((result){
-                    if(result != null) {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context){
-                            return ProfilePage();
-                          })
-                      );
-                    }
-                  });
+                  _loginWithEmail();
+                //signInWithEmail(email: _email, pass: _password);
+                 Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return ProfilePage();
+                          }));
                 },
                 child: Text(
                   "Login",
@@ -173,7 +204,9 @@ class _LoginPageState extends State<LoginPage> {
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context, MaterialPageRoute(builder: (context) => RegisterPage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
                     },
                     child: Text(
                       "Register here",
