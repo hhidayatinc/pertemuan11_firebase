@@ -1,6 +1,6 @@
 import 'package:firebase/auth_service.dart';
 import 'package:firebase/pages/profile_page.dart';
-import 'package:firebase/pages/sign_in_email.dart';
+import 'package:firebase/sign_in_email.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

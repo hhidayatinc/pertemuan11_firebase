@@ -1,7 +1,7 @@
 import 'package:firebase/auth_service.dart';
 import 'package:firebase/pages/profile_page.dart';
 import 'package:firebase/pages/register_page.dart';
-import 'package:firebase/pages/sign_in_email.dart';
+import 'package:firebase/sign_in_email.dart';
 import 'package:firebase/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
