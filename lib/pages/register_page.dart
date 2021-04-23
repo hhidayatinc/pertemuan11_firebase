@@ -1,9 +1,9 @@
-import 'package:firebase/auth.dart';
+import 'package:firebase/auth_service.dart';
 import 'package:firebase/pages/profile_page.dart';
+import 'package:firebase/pages/sign_in_email.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -16,7 +16,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
   final _formKey = GlobalKey<FormState>();
-  var authHandler = new Auth();
+  var authHandler = new AuthService();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
   bool _isHidePass = true;
@@ -59,50 +59,7 @@ class _RegisterPageState extends State<RegisterPage> {
               height: 200,
             ),
             _form(),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              width: size.width * 0.8,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(29),
-                // ignore: deprecated_member_use
-                child: FlatButton(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                  color: kPrimaryColor,
-                  onPressed: () async {
-                    if (_emailController.text.contains('@') &&
-                        _passController.text.length >= 6) {
-                      authHandler
-                          .createUser(
-                              _emailController.text, _passController.text)
-                          .then((User user) {
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) => new ProfilePage()));
-                      }).catchError((e) => print(e));
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                                  title: Text("Error"),
-                                  content: Text(
-                                      "Username must contain '@' and Password must be at least 6 characters. Please fill correctly!"),
-                                  actions: <Widget>[
-                                    FlatButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text("OK"))
-                                  ]));
-                    }
-                  },
-                  child: Text(
-                    "Register",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
+            _registerButton(),
           ],
         ),
       ),
@@ -130,7 +87,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 decoration: InputDecoration(
                   icon: Icon(Icons.people, color: kPrimaryColor),
                   hintText: "Username",
-                  
                   border: InputBorder.none,
                 ),
                 validator: (value) {
@@ -157,7 +113,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 cursorColor: kPrimaryColor,
                 decoration: InputDecoration(
                   hintText: "Password",
-                  
                   icon: Icon(
                     Icons.lock,
                     color: kPrimaryColor,
@@ -186,5 +141,49 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           ],
         ));
+  }
+
+  Widget _registerButton() {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      width: size.width * 0.8,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(29),
+        // ignore: deprecated_member_use
+        child: FlatButton(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+          color: kPrimaryColor,
+          onPressed: () async {
+            SignInSignUpResult result = await AuthService.createUser(
+                email: _emailController.text, password: _passController.text);
+            if (result.user != null) {
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new ProfilePage()));
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                          title: Text("Error"),
+                          content: Text(result.message),
+                          actions: <Widget>[
+                            // ignore: deprecated_member_use
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("OK"))
+                          ]));
+            }
+          },
+          child: Text(
+            "Register",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
   }
 }

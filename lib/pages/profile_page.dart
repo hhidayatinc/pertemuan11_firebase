@@ -1,4 +1,4 @@
-import 'package:firebase/auth.dart';
+import 'package:firebase/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'login_page.dart';
@@ -6,7 +6,7 @@ import 'login_page.dart';
 class ProfilePage extends StatelessWidget {
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
-  var authHandler = new Auth();
+  var authHandler = new AuthService();
 
   @override
   Widget build(BuildContext context) {

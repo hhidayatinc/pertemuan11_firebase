@@ -1,10 +1,10 @@
-import 'package:firebase/auth.dart';
+import 'package:firebase/auth_service.dart';
 import 'package:firebase/pages/profile_page.dart';
 import 'package:firebase/pages/register_page.dart';
+import 'package:firebase/pages/sign_in_email.dart';
 import 'package:firebase/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'first_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
   final _formKey = GlobalKey<FormState>();
-  var authHandler = new Auth();
+  var authHandler = new AuthService();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
   bool _isHidePass = true;
@@ -60,52 +60,8 @@ class _LoginPageState extends State<LoginPage> {
             "icons/login.svg",
             height: 150,
           ),
-          //SizedBox(height: size.height * 0.03),
           _form(),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            width: size.width * 0.8,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(29),
-              // ignore: deprecated_member_use
-              child: FlatButton(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                color: kPrimaryColor,
-                onPressed: () {
-                  if (_emailController.text.isNotEmpty &&
-                      _passController.text.isNotEmpty && _passController.text.length >=6) {
-                    authHandler
-                        .signInWithEmail(
-                            _emailController.text, _passController.text)
-                        .then((User user) {
-                      Navigator.push(
-                          context,
-                          new MaterialPageRoute(
-                              builder: (context) => ProfilePage()));
-                    }).catchError((e) => print(e));
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                                title: Text("Error"),
-                                content: Text(
-                                    "Username/Password invalid. Please fill correctly!"),
-                                actions: <Widget>[
-                                  FlatButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text("OK"))
-                                ]));
-                  }
-                },
-                child: Text(
-                  "Login",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-          ),
+          _loginWithEmail(),
           SizedBox(height: 5),
           Row(
             children: <Widget>[
@@ -208,7 +164,6 @@ class _LoginPageState extends State<LoginPage> {
                 decoration: InputDecoration(
                   icon: Icon(Icons.people, color: kPrimaryColor),
                   hintText: "Username",
-                  
                   border: InputBorder.none,
                 ),
                 validator: (value) {
@@ -263,5 +218,46 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ],
         ));
+  }
+
+  Widget _loginWithEmail() {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      width: size.width * 0.8,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(29),
+        // ignore: deprecated_member_use
+        child: FlatButton(
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+          color: kPrimaryColor,
+          onPressed: () async {
+            SignInSignUpResult result = await AuthService.signInWithEmail(
+                email: _emailController.text, password: _passController.text);
+            if (result.user != null) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => new ProfilePage()));
+            } else {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                          title: Text("Error"),
+                          content: Text(result.message),
+                          actions: <Widget>[
+                            FlatButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text("OK"))
+                          ]));
+            }
+          },
+          child: Text(
+            "Login",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
   }
 }
