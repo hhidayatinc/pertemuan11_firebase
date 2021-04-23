@@ -233,7 +233,7 @@ class _LoginPageState extends State<LoginPage> {
           color: kPrimaryColor,
           onPressed: () async {
             SignInSignUpResult result = await AuthService.signInWithEmail(
-                email: _emailController.text, password: _passController.text);
+                email: _emailController.text, pass: _passController.text);
             if (result.user != null) {
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) => new ProfilePage()));
