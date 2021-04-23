@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 color: kPrimaryColor,
                 onPressed: () {
                   if (_emailController.text.isNotEmpty &&
-                      _passController.text.isNotEmpty) {
+                      _passController.text.isNotEmpty && _passController.text.length >=6) {
                     authHandler
                         .signInWithEmail(
                             _emailController.text, _passController.text)
