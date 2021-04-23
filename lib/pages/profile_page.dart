@@ -1,18 +1,12 @@
-import 'package:firebase/pages/sign_in.dart';
+import 'package:firebase/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'login_page.dart';
 
 class ProfilePage extends StatelessWidget {
-  //  ProfilePage({
-  //   Key key,
-  //   this.user,
-  // }) : super (key: key);
-
-  // final User user;
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
+  var authHandler = new Auth();
 
   @override
   Widget build(BuildContext context) {
@@ -51,29 +45,18 @@ class ProfilePage extends StatelessWidget {
                   letterSpacing: 3,
                   fontSize: 36),
             ),
-            // SizedBox(height: 70),
-            // Text(
-            //   user.email,
-            //   style: TextStyle(
-            //       color: kPrimaryColor,
-            //       fontWeight: FontWeight.bold,
-            //       letterSpacing: 1.5,
-            //       fontSize: 36),
-            // ),
             SizedBox(height: 300),
             Container(
               margin: EdgeInsets.symmetric(vertical: 4),
               width: size.width * 0.8,
-              
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(29),
                 // ignore: deprecated_member_use
                 child: FlatButton(
-                  
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                   color: kPrimaryColor,
                   onPressed: () {
-                    signOutEmail();
+                    authHandler.signOut();
                     Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (context) {
                       return LoginPage();

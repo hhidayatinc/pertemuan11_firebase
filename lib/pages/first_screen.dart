@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
-import 'sign_in.dart';
+import '../sign_in.dart';
 
 class FirstScreen extends StatelessWidget {
   final kPrimaryColor = Color(0xFF6F35A5);

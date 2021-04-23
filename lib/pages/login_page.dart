@@ -1,10 +1,10 @@
+import 'package:firebase/auth.dart';
 import 'package:firebase/pages/profile_page.dart';
 import 'package:firebase/pages/register_page.dart';
-import 'package:firebase/pages/sign_in.dart';
+import 'package:firebase/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'first_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,11 +15,13 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final kPrimaryColor = Color(0xFF6F35A5);
   final kPrimaryLightColor = Color(0xFFF1E6FF);
+  final _formKey = GlobalKey<FormState>();
+  var authHandler = new Auth();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passController = new TextEditingController();
   bool _isHidePass = true;
-  String _email;
-  String _password;
+  // String _email;
+  // String _password;
 
   void _togglePasswordvisibility() {
     setState(() {
@@ -27,18 +29,18 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  Future<void> _loginWithEmail() async {
-    await Firebase.initializeApp();
-    try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: _email, password: _password);
-      print("User : $userCredential");
-    } on FirebaseAuthException catch (e) {
-      print("Error : $e");
-    } catch (e) {
-      print("Error : $e");
-    }
-  }
+  // Future<void> _loginWithEmail() async {
+  //   await Firebase.initializeApp();
+  //   try {
+  //     UserCredential userCredential = await FirebaseAuth.instance
+  //         .signInWithEmailAndPassword(email: _email, password: _password);
+  //     print("User : $userCredential");
+  //   } on FirebaseAuthException catch (e) {
+  //     print("Error : $e");
+  //   } catch (e) {
+  //     print("Error : $e");
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -59,63 +61,7 @@ class _LoginPageState extends State<LoginPage> {
             height: 150,
           ),
           //SizedBox(height: size.height * 0.03),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            width: size.width * 0.8,
-            decoration: BoxDecoration(
-              color: kPrimaryLightColor,
-              borderRadius: BorderRadius.circular(29),
-            ),
-            child: TextField(
-              onChanged: (value) {
-                _email = value;
-              },
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              cursorColor: kPrimaryColor,
-              decoration: InputDecoration(
-                icon: Icon(Icons.people, color: kPrimaryColor),
-                hintText: "Username",
-                border: InputBorder.none,
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            width: size.width * 0.8,
-            decoration: BoxDecoration(
-              color: kPrimaryLightColor,
-              borderRadius: BorderRadius.circular(29),
-            ),
-            child: TextField(
-              onChanged: (value) {
-                _password = value;
-              },
-              controller: _passController,
-              obscureText: _isHidePass,
-              cursorColor: kPrimaryColor,
-              decoration: InputDecoration(
-                hintText: "Password",
-                icon: Icon(
-                  Icons.lock,
-                  color: kPrimaryColor,
-                ),
-                suffixIcon: GestureDetector(
-                  onTap: () {
-                    _togglePasswordvisibility();
-                  },
-                  child: Icon(
-                    _isHidePass ? Icons.visibility_off : Icons.visibility,
-                    color: _isHidePass ? kPrimaryColor : kPrimaryColor,
-                  ),
-                ),
-                isDense: true,
-                border: InputBorder.none,
-              ),
-            ),
-          ),
+          _form(),
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
             width: size.width * 0.8,
@@ -126,12 +72,32 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
                 color: kPrimaryColor,
                 onPressed: () {
-                  _loginWithEmail();
-                //signInWithEmail(email: _email, pass: _password);
-                 Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return ProfilePage();
-                          }));
+                  if (_emailController.text.isNotEmpty &&
+                      _passController.text.isNotEmpty) {
+                    authHandler
+                        .signInWithEmail(
+                            _emailController.text, _passController.text)
+                        .then((User user) {
+                      Navigator.push(
+                          context,
+                          new MaterialPageRoute(
+                              builder: (context) => ProfilePage()));
+                    }).catchError((e) => print(e));
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                                title: Text("Error"),
+                                content: Text(
+                                    "Username/Password invalid. Please fill correctly!"),
+                                actions: <Widget>[
+                                  FlatButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text("OK"))
+                                ]));
+                  }
                 },
                 child: Text(
                   "Login",
@@ -219,5 +185,83 @@ class _LoginPageState extends State<LoginPage> {
         ],
       ),
     ));
+  }
+
+  Widget _form() {
+    Size size = MediaQuery.of(context).size;
+    return Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              width: size.width * 0.8,
+              decoration: BoxDecoration(
+                color: kPrimaryLightColor,
+                borderRadius: BorderRadius.circular(29),
+              ),
+              child: TextFormField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                cursorColor: kPrimaryColor,
+                decoration: InputDecoration(
+                  icon: Icon(Icons.people, color: kPrimaryColor),
+                  hintText: "Username",
+                  
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Enter an Email Address';
+                  } else if (!value.contains('@')) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              width: size.width * 0.8,
+              decoration: BoxDecoration(
+                color: kPrimaryLightColor,
+                borderRadius: BorderRadius.circular(29),
+              ),
+              child: TextFormField(
+                controller: _passController,
+                obscureText: _isHidePass,
+                cursorColor: kPrimaryColor,
+                decoration: InputDecoration(
+                  hintText: "Password",
+                  icon: Icon(
+                    Icons.lock,
+                    color: kPrimaryColor,
+                  ),
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      _togglePasswordvisibility();
+                    },
+                    child: Icon(
+                      _isHidePass ? Icons.visibility_off : Icons.visibility,
+                      color: _isHidePass ? kPrimaryColor : kPrimaryColor,
+                    ),
+                  ),
+                  isDense: true,
+                  border: InputBorder.none,
+                ),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Enter Password';
+                  } else if (value.length < 6) {
+                    return 'Password must be atleast 6 characters!';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
+        ));
   }
 }

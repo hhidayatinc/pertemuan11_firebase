@@ -1,4 +1,3 @@
-import 'package:firebase/pages/sign_in_email.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -53,31 +52,31 @@ Future<void> signOutGoogle() async {
   print("User Signed Out");
 }
 
-Future<SignInSignUpResult> createUser({String email, String pass}) async {
-  await Firebase.initializeApp();
-  try {
-    UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email, password: pass);
-    return SignInSignUpResult(user: result.user);
-  } catch (e) {
-    return SignInSignUpResult(message: e.toString());
-  }
-}
+// Future<SignInSignUpResult> createUser({String email, String pass}) async {
+//   await Firebase.initializeApp();
+//   try {
+//     UserCredential result = await _auth.createUserWithEmailAndPassword(
+//         email: email, password: pass);
+//     return SignInSignUpResult(user: result.user);
+//   } catch (e) {
+//     return SignInSignUpResult(message: e.toString());
+//   }
+// }
 
-Future<SignInSignUpResult> signInWithEmail({String email, String pass}) async {
-  await Firebase.initializeApp();
-  try {
-    UserCredential result =
-        await _auth.signInWithEmailAndPassword(email: email, password: pass);
-    return SignInSignUpResult(user: result.user);
-  } catch (e) {
-    return SignInSignUpResult(message: e.toString());
-  }
-}
+// Future<SignInSignUpResult> signInWithEmail({String email, String pass}) async {
+//   await Firebase.initializeApp();
+//   try {
+//     UserCredential result =
+//         await _auth.signInWithEmailAndPassword(email: email, password: pass);
+//     return SignInSignUpResult(user: result.user);
+//   } catch (e) {
+//     return SignInSignUpResult(message: e.toString());
+//   }
+// }
 
 
-Future<void> signOutEmail() async {
-  _auth.signOut();
-  print("User Signed Out");
-}
+// Future<void> signOutEmail() async {
+//   _auth.signOut();
+//   print("User Signed Out");
+// }
 
