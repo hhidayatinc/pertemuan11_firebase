@@ -1,4 +1,4 @@
-import 'package:firebase/pages/sign_in_email.dart';
+import 'package:firebase/sign_in_email.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
