@@ -244,6 +244,7 @@ class _LoginPageState extends State<LoginPage> {
                           title: Text("Error"),
                           content: Text(result.message),
                           actions: <Widget>[
+                            // ignore: deprecated_member_use
                             FlatButton(
                                 onPressed: () {
                                   Navigator.pop(context);

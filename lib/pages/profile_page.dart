@@ -5,10 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'login_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   final kPrimaryColor = Color(0xFF6F35A5);
+
   final kPrimaryLightColor = Color(0xFFF1E6FF);
+
   var authHandler = new AuthService();
+
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override

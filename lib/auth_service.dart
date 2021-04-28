@@ -11,7 +11,7 @@ class AuthService {
           email: email, password: pass);
       return SignInSignUpResult(user: result.user);
     } catch (e) {
-      return SignInSignUpResult(message: (e.message).toString());
+      return SignInSignUpResult(message: e.toString());
     }
   }
   // UserCredential result = await auth.createUserWithEmailAndPassword(
@@ -26,11 +26,11 @@ class AuthService {
   static Future<SignInSignUpResult> signInWithEmail(
       {String email, String pass}) async {
     try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-          email: email, password: pass);
+      UserCredential result =
+          await _auth.signInWithEmailAndPassword(email: email, password: pass);
       return SignInSignUpResult(user: result.user);
     } catch (e) {
-      return SignInSignUpResult(message: (e.message).toString());
+      return SignInSignUpResult(message: e.toString());
     }
   }
   // UserCredential result =
